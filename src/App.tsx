@@ -1,115 +1,97 @@
 import { useState } from 'react'
-import { EventPage } from './components/event'
+import { EventPage, SiteFooter, SiteHeader } from './components/event'
 import {
+  ConfirmationScreen,
   JoinWaitlistModal,
-  PaymentForm,
-  ConfirmationModal,
-  LeaveWaitlistModal,
+  OnListPanel,
+  PaymentPage,
 } from './components/waitlist'
 
-type WaitlistStep = 'idle' | 'join' | 'payment' | 'confirmation' | 'leave'
-
-interface WaitlistState {
-  isOnWaitlist: boolean
-  position: number
-  quantity: number
-}
+type Screen = 'event' | 'payment' | 'confirmation' | 'wallet'
 
 function App() {
-  const [step, setStep] = useState<WaitlistStep>('idle')
-  const [waitlistState, setWaitlistState] = useState<WaitlistState>({
-    isOnWaitlist: false,
-    position: 0,
-    quantity: 1,
-  })
+  const [screen, setScreen] = useState<Screen>('event')
+  const [isJoinOpen, setIsJoinOpen] = useState(false)
+  const [quantity, setQuantity] = useState(0)
+  const [autoCancel, setAutoCancel] = useState(false)
+  const [useDifferentCard, setUseDifferentCard] = useState(false)
 
-  const ticketInfo = {
-    name: 'General Admission',
-    price: 75.00,
-    waitlistFee: 2.50,
+  const handleOpenJoin = () => {
+    setQuantity(0)
+    setAutoCancel(false)
+    setIsJoinOpen(true)
   }
 
-  const handleJoinWaitlist = () => {
-    setStep('join')
+  const handleJoinSubmit = () => {
+    if (quantity < 1) return
+    setIsJoinOpen(false)
+    setUseDifferentCard(false)
+    setScreen('payment')
   }
 
-  const handleLeaveWaitlist = () => {
-    setStep('leave')
+  const handleLeave = () => {
+    setQuantity(0)
+    setAutoCancel(false)
+    setUseDifferentCard(false)
+    setScreen('event')
   }
 
-  const handleJoinSubmit = (quantity: number) => {
-    setWaitlistState(prev => ({ ...prev, quantity }))
-    setStep('payment')
-  }
-
-  const handlePaymentSubmit = () => {
-    const randomPosition = Math.floor(Math.random() * 50) + 1
-    setWaitlistState(prev => ({
-      ...prev,
-      isOnWaitlist: true,
-      position: randomPosition,
-    }))
-    setStep('confirmation')
-  }
-
-  const handleConfirmationClose = () => {
-    setStep('idle')
-  }
-
-  const handleLeaveConfirm = () => {
-    setWaitlistState({
-      isOnWaitlist: false,
-      position: 0,
-      quantity: 1,
-    })
-    setStep('idle')
-  }
-
-  const handleClose = () => {
-    setStep('idle')
+  if (screen === 'confirmation') {
+    return <ConfirmationScreen onGotIt={() => setScreen('wallet')} />
   }
 
   return (
-    <>
-      <EventPage
-        isOnWaitlist={waitlistState.isOnWaitlist}
-        waitlistPosition={waitlistState.position}
-        onJoinWaitlist={handleJoinWaitlist}
-        onLeaveWaitlist={handleLeaveWaitlist}
-      />
-
+    <div className="kyd-page flex min-h-screen flex-col">
+      <SiteHeader />
+      <EventPage showTickets={screen === 'event'} onJoinWaitlist={handleOpenJoin} />
+      {renderScreen({
+        screen,
+        useDifferentCard,
+        onUseDifferentCard: () => setUseDifferentCard(true),
+        onJoin: () => setScreen('confirmation'),
+        onLeave: handleLeave,
+      })}
+      <SiteFooter />
       <JoinWaitlistModal
-        isOpen={step === 'join'}
-        onClose={handleClose}
+        isOpen={isJoinOpen && screen === 'event'}
+        quantity={quantity}
+        autoCancel={autoCancel}
+        onQuantityChange={setQuantity}
+        onAutoCancelChange={setAutoCancel}
+        onClose={() => setIsJoinOpen(false)}
         onSubmit={handleJoinSubmit}
-        ticketName={ticketInfo.name}
-        ticketPrice={ticketInfo.price}
       />
-
-      <PaymentForm
-        isOpen={step === 'payment'}
-        onClose={handleClose}
-        onSubmit={handlePaymentSubmit}
-        amount={ticketInfo.waitlistFee * waitlistState.quantity}
-        description={`Waitlist fee (${waitlistState.quantity}x)`}
-      />
-
-      <ConfirmationModal
-        isOpen={step === 'confirmation'}
-        onClose={handleConfirmationClose}
-        position={waitlistState.position}
-        ticketName={ticketInfo.name}
-        quantity={waitlistState.quantity}
-      />
-
-      <LeaveWaitlistModal
-        isOpen={step === 'leave'}
-        onClose={handleClose}
-        onConfirm={handleLeaveConfirm}
-        position={waitlistState.position}
-      />
-    </>
+    </div>
   )
+}
+
+interface ScreenExtras {
+  screen: Exclude<Screen, 'confirmation'>
+  useDifferentCard: boolean
+  onUseDifferentCard: () => void
+  onJoin: () => void
+  onLeave: () => void
+}
+
+function renderScreen({ screen, useDifferentCard, onUseDifferentCard, onJoin, onLeave }: ScreenExtras) {
+  switch (screen) {
+    case 'event':
+      return null
+    case 'payment':
+      return (
+        <PaymentPage
+          useDifferentCard={useDifferentCard}
+          onUseDifferentCard={onUseDifferentCard}
+          onJoin={onJoin}
+        />
+      )
+    case 'wallet':
+      return <OnListPanel onLeave={onLeave} />
+    default: {
+      const unreachable: never = screen
+      return unreachable
+    }
+  }
 }
 
 export default App

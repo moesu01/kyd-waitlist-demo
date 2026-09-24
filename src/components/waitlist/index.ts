@@ -1,4 +1,4 @@
+export { ConfirmationScreen } from './ConfirmationScreen'
 export { JoinWaitlistModal } from './JoinWaitlistModal'
-export { PaymentForm } from './PaymentForm'
-export { ConfirmationModal } from './ConfirmationModal'
-export { LeaveWaitlistModal } from './LeaveWaitlistModal'
+export { OnListPanel } from './OnListPanel'
+export { PaymentPage } from './PaymentPage'

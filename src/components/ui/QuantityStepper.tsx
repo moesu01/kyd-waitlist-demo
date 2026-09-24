@@ -3,73 +3,49 @@ interface QuantityStepperProps {
   onChange: (value: number) => void
   min?: number
   max?: number
-  label?: string
+  tone?: 'light' | 'dark' | 'pill'
 }
 
 export function QuantityStepper({
   value,
   onChange,
-  min = 1,
+  min = 0,
   max = 10,
-  label = 'Quantity',
+  tone = 'light',
 }: QuantityStepperProps) {
-  const handleDecrement = () => {
-    if (value > min) onChange(value - 1)
-  }
-
-  const handleIncrement = () => {
-    if (value < max) onChange(value + 1)
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10)
-    if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-      onChange(newValue)
-    }
-  }
+  const isMin = value <= min
+  const isMax = value >= max
+  const numberClass = tone === 'light' ? 'text-neutral-900' : 'text-white'
+  const minusClass = tone === 'pill'
+    ? 'bg-white/25 text-white/50 enabled:bg-white enabled:text-black'
+    : 'bg-neutral-200 text-neutral-400 enabled:bg-black enabled:text-white'
+  const plusClass = tone === 'pill'
+    ? 'bg-white text-black disabled:bg-white/25 disabled:text-white/50'
+    : 'bg-black text-white disabled:bg-neutral-300'
 
   return (
-    <div className="flex flex-col gap-2">
-      {label && (
-        <label className="text-sm font-medium text-kyd-gray">{label}</label>
-      )}
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={handleDecrement}
-          disabled={value <= min}
-          className="w-10 h-10 rounded-full border-2 border-kyd-light-gray flex items-center justify-center text-kyd-charcoal hover:bg-kyd-light-gray transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          aria-label="Decrease quantity"
-          tabIndex={0}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-          </svg>
-        </button>
-        
-        <input
-          type="number"
-          value={value}
-          onChange={handleInputChange}
-          min={min}
-          max={max}
-          className="w-16 h-10 text-center text-xl font-semibold text-kyd-charcoal border-2 border-kyd-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-kyd-lime focus:border-transparent"
-          aria-label="Quantity"
-        />
-        
-        <button
-          type="button"
-          onClick={handleIncrement}
-          disabled={value >= max}
-          className="w-10 h-10 rounded-full border-2 border-kyd-light-gray flex items-center justify-center text-kyd-charcoal hover:bg-kyd-light-gray transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          aria-label="Increase quantity"
-          tabIndex={0}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
-      </div>
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        disabled={isMin}
+        onClick={() => onChange(value - 1)}
+        className={`flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none disabled:cursor-not-allowed ${minusClass}`}
+      >
+        −
+      </button>
+      <span className={`w-5 text-center text-sm font-semibold tabular-nums ${numberClass}`}>
+        {value}
+      </span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        disabled={isMax}
+        onClick={() => onChange(value + 1)}
+        className={`flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none disabled:cursor-not-allowed ${plusClass}`}
+      >
+        +
+      </button>
     </div>
   )
 }
