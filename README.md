@@ -1,27 +1,102 @@
-# kyd-waitlist-demo
+# KYD Waitlist Demo Mock
 
-Static demo mock of the KYD Labs event waitlist flow (modals + payment UI).
+A static demo of the KYD event page and waitlist modal flow built with Vite, React, TypeScript, and Tailwind CSS.
 
-Built from a live capture of the Peggy Gou event waitlist on kydlabsdemo.com so we can iterate on waitlist modal copy and layout for demos without touching production.
+## Quick Start
 
-## Status
+```bash
+npm install
+npm run dev
+```
 
-Scaffold / initial commit. Capture assets and the interactive mock land in follow-up commits.
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## Capture reference (planned)
+## Demo Flow
 
-| Step | Screen |
-|------|--------|
-| 01 | Event landing + JOIN WAITLIST |
-| 02 | Get in line modal (qty 0) |
-| 03 | Get in line modal (qty selected) |
-| 04 | Waitlist payment / GET ON THE LIST |
-| 05 | Sandbox card filled |
-| 06 | Confirmation modal |
-| 07 | YOU ARE ON THE LIST / wallet |
+The demo walks through the complete KYD waitlist experience:
 
-Payment UI in the mock is fake / Stripe-test-shaped only — no real charges.
+| Step | Description | Screenshot Reference |
+|------|-------------|---------------------|
+| 01 | Event landing page with "SOLD OUT" General Admission | `capture/screenshots/desktop/01-event-page.png` |
+| 02 | "Get in line" modal with quantity stepper | `capture/screenshots/desktop/02-get-in-line.png` |
+| 03 | Fake payment form (Stripe-style sandbox UI) | `capture/screenshots/desktop/03-payment.png` |
+| 04 | Payment processing state | `capture/screenshots/desktop/04-processing.png` |
+| 05 | Confirmation: "You've been added to the waitlist!" | `capture/screenshots/desktop/05-confirmation.png` |
+| 06 | On-list state showing waitlist position | `capture/screenshots/desktop/06-on-list.png` |
+| 07 | Leave waitlist confirmation dialog | `capture/screenshots/desktop/07-leave-waitlist.png` |
+
+See [`docs/flow.md`](docs/flow.md) for the complete flow documentation.
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── event/           # Event page components
+│   │   ├── EventPage.tsx
+│   │   ├── EventBanner.tsx
+│   │   ├── EventDetails.tsx
+│   │   └── TicketCard.tsx
+│   ├── waitlist/        # Waitlist modal components (easily editable for demos)
+│   │   ├── JoinWaitlistModal.tsx
+│   │   ├── PaymentForm.tsx
+│   │   ├── ConfirmationModal.tsx
+│   │   └── LeaveWaitlistModal.tsx
+│   └── ui/              # Reusable UI primitives
+│       ├── Button.tsx
+│       ├── Modal.tsx
+│       ├── QuantityStepper.tsx
+│       └── Checkbox.tsx
+├── App.tsx              # Main app with flow state management
+├── main.tsx             # Entry point
+└── index.css            # Tailwind + KYD theme
+```
+
+## Customizing for Demos
+
+The waitlist modals are designed to be easily customizable:
+
+1. **Modal copy**: Edit text directly in `src/components/waitlist/*.tsx`
+2. **Colors**: Update theme values in `src/index.css` (look for `@theme`)
+3. **Event details**: Modify `EventPage.tsx` and `EventDetails.tsx`
+4. **Ticket info**: Update the `ticketInfo` object in `App.tsx`
+
+### Key Theme Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-kyd-charcoal` | `#1a1a1a` | Page background |
+| `--color-kyd-lime` | `#D3F227` | Primary CTA buttons |
+| `--color-kyd-white` | `#ffffff` | Card backgrounds |
+
+## Important Notes
+
+### ⚠️ Payment Form is Fake
+
+The payment form in this demo is purely for UI demonstration purposes:
+
+- **No real payment processing** occurs
+- **No connection to Stripe** or any payment provider
+- Card information entered is **not validated or stored**
+- The "sandbox mode" banner is always visible
+
+This is intentional — the demo is meant to showcase the UI/UX flow, not handle real transactions.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+
+## Tech Stack
+
+- **React 19** with functional components and hooks
+- **TypeScript** for type safety
+- **Tailwind CSS v4** for styling
+- **Vite** for fast development and builds
 
 ## License
 
-Private demo project for KYD.
+Demo purposes only.
