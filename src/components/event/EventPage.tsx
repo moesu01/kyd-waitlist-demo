@@ -1,22 +1,17 @@
+import type { ReactNode } from 'react'
 import { EventInfo } from './EventInfo'
-import { TicketSection } from './TicketSection'
 
 interface EventPageProps {
-  showTickets: boolean
-  onJoinWaitlist: () => void
+  children?: ReactNode
 }
 
-export function EventPage({ showTickets, onJoinWaitlist }: EventPageProps) {
-  const layoutClass = showTickets
-    ? 'md:grid md:grid-cols-2 md:items-start md:gap-5'
-    : 'md:grid md:grid-cols-[minmax(0,280px)_1fr] md:items-start md:gap-6'
-
+export function EventPage({ children }: EventPageProps) {
   return (
-    <div className="mx-auto w-full max-w-[1100px] px-4 pb-4 md:px-6">
-      <div className={`md:rounded-[24px] md:bg-white md:p-5 ${layoutClass}`}>
+    <main className="mx-auto flex w-full max-w-[760px] flex-col gap-4 px-4 pb-10 md:gap-5 md:px-6">
+      <section className="md:rounded-2xl md:bg-white md:p-6 md:shadow-sm">
         <EventInfo />
-        {showTickets ? <TicketSection onJoinWaitlist={onJoinWaitlist} /> : null}
-      </div>
-    </div>
+      </section>
+      {children}
+    </main>
   )
 }

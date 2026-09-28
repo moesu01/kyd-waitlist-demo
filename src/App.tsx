@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EventPage, SiteFooter, SiteHeader } from './components/event'
+import { TicketSection } from './components/event/TicketSection'
 import {
   ConfirmationScreen,
   JoinWaitlistModal,
@@ -13,12 +14,10 @@ function App() {
   const [screen, setScreen] = useState<Screen>('event')
   const [isJoinOpen, setIsJoinOpen] = useState(false)
   const [quantity, setQuantity] = useState(0)
-  const [autoCancel, setAutoCancel] = useState(false)
   const [useDifferentCard, setUseDifferentCard] = useState(false)
 
   const handleOpenJoin = () => {
     setQuantity(0)
-    setAutoCancel(false)
     setIsJoinOpen(true)
   }
 
@@ -31,7 +30,6 @@ function App() {
 
   const handleLeave = () => {
     setQuantity(0)
-    setAutoCancel(false)
     setUseDifferentCard(false)
     setScreen('event')
   }
@@ -43,21 +41,21 @@ function App() {
   return (
     <div className="kyd-page flex min-h-screen flex-col">
       <SiteHeader />
-      <EventPage showTickets={screen === 'event'} onJoinWaitlist={handleOpenJoin} />
-      {renderScreen({
-        screen,
-        useDifferentCard,
-        onUseDifferentCard: () => setUseDifferentCard(true),
-        onJoin: () => setScreen('confirmation'),
-        onLeave: handleLeave,
-      })}
+      <EventPage>
+        {screen === 'event' ? <TicketSection onJoinWaitlist={handleOpenJoin} /> : null}
+        {renderScreen({
+          screen,
+          useDifferentCard,
+          onUseDifferentCard: () => setUseDifferentCard(true),
+          onJoin: () => setScreen('confirmation'),
+          onLeave: handleLeave,
+        })}
+      </EventPage>
       <SiteFooter />
       <JoinWaitlistModal
         isOpen={isJoinOpen && screen === 'event'}
         quantity={quantity}
-        autoCancel={autoCancel}
         onQuantityChange={setQuantity}
-        onAutoCancelChange={setAutoCancel}
         onClose={() => setIsJoinOpen(false)}
         onSubmit={handleJoinSubmit}
       />

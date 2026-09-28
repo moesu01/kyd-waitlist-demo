@@ -32,12 +32,19 @@ export const waitlistCopy = {
     'How many tickets do you need? Pro-tip: The fewer tickets you request, the higher your chances we’ll be able find you tickets as they become available!',
   tierName: 'GENERAL ADMISSION',
   price: '$63.35',
-  cancelLabel: 'Automatically cancel my request',
+  cancelBeforeLabel: 'cancel request before:',
+  cancelBeforeEvent: 'before event',
+  cancelUnitHours: 'hours',
+  cancelUnitDays: 'days',
+  cancelUnitWeek: 'week',
+  neverCancelLabel: 'never cancel my request',
   payTitle: 'GET ON THE LIST',
   payIntro:
     "When you add your credit card, you're giving us the ability to instantly secure tickets for you as soon as they become available.",
   payCharge:
     'The $63.35 charge (including sales tax) will only be applied if we successfully obtain tickets for you prior to the event.',
+  payReassure:
+    'Rest assured, you have the flexibility to remove yourself from the waitlist at any time before the event takes place.',
   attendeeName: 'mohamed suliman',
   attendeeEmail: 'moe@kydlabs.com',
   cardCharge: 'Your card will be charged $63.35 if we get your tickets.',
@@ -60,12 +67,13 @@ export const waitlistCopy = {
 export interface TicketTier {
   id: string
   name: string
+  detail?: string
   price?: string
   kind: 'listed' | 'waitlist' | 'quantity' | 'soldout'
 }
 
 export const ticketTiers: TicketTier[] = [
-  { id: 'advance', name: 'Advance Tickets Pre Sale', kind: 'listed' },
+  { id: 'advance', name: 'Advance Tickets Pre Sale', detail: 'Exclusive presale for the fans', kind: 'listed' },
   { id: 'ga', name: 'General Admission', kind: 'waitlist' },
   { id: 'tier-2', name: 'Tier 2', price: '$26.78', kind: 'quantity' },
   { id: 'tier-1', name: 'Tier 1', kind: 'soldout' },

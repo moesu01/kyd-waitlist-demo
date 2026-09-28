@@ -41,3 +41,9 @@ select {
   );
   background-size: cover;
 }
+
+.kyd-dots {
+  background-color: #d3f227;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.22) 0.7px, transparent 0.75px);
+  background-size: 4px 4px;
+}
